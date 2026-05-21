@@ -1,0 +1,35 @@
+---
+import { apps, profile } from "../data/site";
+---
+
+<header class="sticky top-0 z-40 border-b border-[var(--line)] bg-[rgba(6,16,20,0.82)] backdrop-blur-xl">
+  <div class="container-shell flex h-14 items-center justify-between gap-4">
+    <a href="/" class="focus-ring atlas-link rounded-sm text-sm font-extrabold tracking-[0.18em] text-[var(--ink)] uppercase">
+      Xueyang Song
+    </a>
+    <nav class="hidden items-center gap-6 text-xs font-bold tracking-[0.12em] text-[var(--muted)] uppercase md:flex" aria-label="Primary">
+      <a class="transition hover:text-[var(--ink)]" href="/#research">Research</a>
+      <a class="transition hover:text-[var(--ink)]" href="/#apps">Apps</a>
+      <a class="transition hover:text-[var(--ink)]" href="/#publications">Publications</a>
+      <a class="transition hover:text-[var(--ink)]" href="/#projects">Projects</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      {apps.map((app) => (
+        <a
+          href={`/apps/${app.slug}/`}
+          class="focus-ring hidden rounded-md border border-[var(--line)] bg-white/[0.035] px-3 py-2 text-xs font-bold text-[var(--muted)] shadow-sm transition hover:border-[var(--teal)] hover:text-[var(--ink)] sm:inline-flex"
+        >
+          {app.name}
+        </a>
+      ))}
+      <a
+        href={profile.links.find((link) => link.label === "GitHub")?.href}
+        class="focus-ring rounded-md bg-[var(--teal)] px-3 py-2 text-xs font-black text-[#031115] shadow-sm transition hover:bg-[#7ee0df]"
+        target="_blank"
+        rel="noreferrer"
+      >
+        GitHub
+      </a>
+    </div>
+  </div>
+</header>

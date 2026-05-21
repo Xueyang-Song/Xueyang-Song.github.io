@@ -1,0 +1,55 @@
+---
+import DownloadButton from "../../components/DownloadButton";
+import MaterialAtlas from "../../components/MaterialAtlas.astro";
+import ProductVisual from "../../components/ProductVisual.astro";
+import { apps, atlasLinks, atlasNodes } from "../../data/site";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+---
+
+<SiteLayout
+  title="Apps | Xueyang Song"
+  description="Product homes for the local-first scientific desktop apps I'm building."
+>
+  <section class="atlas-shell border-b border-[var(--line)]">
+    <div class="container-shell relative z-10 grid gap-10 py-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
+      <div>
+        <p class="atlas-kicker">Software layer</p>
+        <h1 class="mt-5 text-5xl font-semibold leading-tight text-[var(--ink)] sm:text-6xl">
+          Local-first desktop tools connected to research evidence.
+        </h1>
+        <p class="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
+          I'm designing Paper Pilot and AcademiaML around inspectable project files, local execution, and explicit approval for broader agent actions.
+        </p>
+      </div>
+      <MaterialAtlas nodes={atlasNodes.filter((node) => node.kind !== "publication")} links={atlasLinks} />
+    </div>
+  </section>
+
+  <section class="section-pad">
+    <div class="container-shell grid gap-8">
+      {apps.map((app) => (
+        <article class="tool-card grid gap-7 p-5 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <ProductVisual app={app} />
+          <div>
+            <span class="status-pill">coming soon</span>
+            <h2 class="mt-5 text-4xl font-semibold text-[var(--ink)]">{app.name}</h2>
+            <p class="mt-4 text-lg leading-8 text-[var(--muted)]">{app.shortDescription}</p>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <DownloadButton
+                client:load
+                repo={app.repo}
+                status={app.versionStatus}
+                assetPatterns={app.releaseAssets}
+                fallbackUrl={app.repo}
+                label={app.primaryCta}
+              />
+              <a href={`/apps/${app.slug}/`} class="focus-ring secondary-cta">
+                Product page
+              </a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</SiteLayout>

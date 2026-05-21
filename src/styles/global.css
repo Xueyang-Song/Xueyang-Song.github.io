@@ -1,0 +1,417 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --ink: #edf7f2;
+  --muted: #9caea8;
+  --faint: #6f817c;
+  --line: rgba(171, 199, 190, 0.16);
+  --line-strong: rgba(171, 199, 190, 0.3);
+  --atlas-bg: #061014;
+  --atlas-bg-2: #0a171d;
+  --panel: rgba(12, 27, 34, 0.82);
+  --panel-solid: #0d1c23;
+  --panel-soft: rgba(21, 43, 51, 0.62);
+  --teal: #58c7c9;
+  --sage: #94b99f;
+  --copper: #d28a55;
+  --amber: #e2b86f;
+  --blue: #7aa7d9;
+  --danger: #c97166;
+  --shadow: 0 26px 90px rgba(0, 0, 0, 0.38);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(88, 199, 201, 0.14), transparent 28rem),
+    radial-gradient(circle at 88% 6%, rgba(210, 138, 85, 0.12), transparent 26rem),
+    linear-gradient(rgba(171, 199, 190, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(171, 199, 190, 0.045) 1px, transparent 1px),
+    var(--atlas-bg);
+  background-size:
+    auto,
+    auto,
+    34px 34px,
+    34px 34px,
+    auto;
+  color: var(--ink);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  line-height: 1.5;
+}
+
+a:not([class]) {
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(88, 199, 201, 0.32);
+  color: #ffffff;
+}
+
+.container-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+.section-pad {
+  padding-block: clamp(64px, 9vw, 118px);
+}
+
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+}
+
+.focus-ring:focus-visible {
+  outline-color: var(--teal);
+}
+
+.atlas-shell {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 14%, rgba(88, 199, 201, 0.11), transparent 30rem),
+    radial-gradient(circle at 80% 10%, rgba(148, 185, 159, 0.08), transparent 26rem),
+    linear-gradient(180deg, rgba(10, 23, 29, 0.98), rgba(6, 16, 20, 0.96));
+}
+
+.atlas-shell::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    linear-gradient(rgba(171, 199, 190, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(171, 199, 190, 0.055) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(circle at 55% 20%, black, transparent 75%);
+}
+
+.observatory-hero {
+  min-height: calc(100vh - 56px);
+}
+
+.atlas-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background:
+    linear-gradient(145deg, rgba(16, 35, 43, 0.86), rgba(8, 20, 25, 0.86)),
+    var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.atlas-panel::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 100% 28px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px) 0 0 / 28px 100%;
+  mask-image: linear-gradient(140deg, rgba(0, 0, 0, 0.85), transparent 72%);
+}
+
+.atlas-map {
+  position: relative;
+  min-height: 32rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(88, 199, 201, 0.12), transparent 16rem),
+    linear-gradient(rgba(171, 199, 190, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(171, 199, 190, 0.05) 1px, transparent 1px),
+    rgba(7, 18, 23, 0.86);
+  background-size:
+    auto,
+    42px 42px,
+    42px 42px,
+    auto;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.04), var(--shadow);
+}
+
+.atlas-link-line {
+  stroke: rgba(88, 199, 201, 0.48);
+  stroke-dasharray: 9 12;
+  animation: path-flow 9s linear infinite;
+}
+
+.atlas-node-pulse {
+  fill: transparent;
+  stroke: rgba(88, 199, 201, 0.32);
+  stroke-width: 1.5;
+  animation: node-pulse 4.8s ease-in-out infinite;
+}
+
+.atlas-node-core {
+  fill: var(--panel-solid);
+  stroke: var(--teal);
+  stroke-width: 2;
+}
+
+.atlas-node-core[data-kind="software"] {
+  stroke: var(--blue);
+}
+
+.atlas-node-core[data-kind="publication"] {
+  stroke: var(--copper);
+}
+
+.atlas-node-core[data-kind="project"] {
+  stroke: var(--sage);
+}
+
+.axis-label {
+  color: var(--faint);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.atlas-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--teal);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.atlas-kicker::before {
+  width: 2rem;
+  height: 1px;
+  content: "";
+  background: currentColor;
+}
+
+.data-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background:
+    linear-gradient(145deg, rgba(22, 45, 54, 0.78), rgba(10, 23, 29, 0.74)),
+    var(--panel);
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.26);
+}
+
+.signal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(88, 199, 201, 0.18);
+  border-radius: 999px;
+  background: rgba(88, 199, 201, 0.09);
+  color: #c9f4ee;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.38rem 0.68rem;
+}
+
+.signal-chip::before {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  content: "";
+  background: currentColor;
+  box-shadow: 0 0 16px currentColor;
+}
+
+.domain-card,
+.tool-card,
+.evidence-row {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background:
+    linear-gradient(145deg, rgba(16, 35, 43, 0.78), rgba(8, 20, 25, 0.76)),
+    var(--panel);
+  box-shadow: 0 18px 58px rgba(0, 0, 0, 0.24);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.domain-card:hover,
+.tool-card:hover,
+.evidence-row:hover {
+  border-color: rgba(88, 199, 201, 0.42);
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.34);
+  transform: translateY(-4px);
+}
+
+.domain-card::after {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  width: 5rem;
+  height: 5rem;
+  content: "";
+  border: 1px solid rgba(88, 199, 201, 0.16);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(88, 199, 201, 0.26) 2px, transparent 3px) 50% 50% / 14px 14px;
+  opacity: 0.5;
+}
+
+.atlas-link {
+  position: relative;
+  display: inline-flex;
+  color: var(--teal);
+}
+
+.atlas-link::after {
+  position: absolute;
+  right: 0;
+  bottom: -0.22rem;
+  left: 0;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, var(--teal), var(--copper));
+  transform: scaleX(0.3);
+  transform-origin: left;
+  transition: transform 220ms ease;
+}
+
+.atlas-link:hover::after {
+  transform: scaleX(1);
+}
+
+.status-pill {
+  border: 1px solid rgba(210, 138, 85, 0.34);
+  border-radius: 999px;
+  background: rgba(210, 138, 85, 0.1);
+  color: #ffd4ac;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  padding: 0.36rem 0.7rem;
+  text-transform: uppercase;
+}
+
+.readout-value {
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 24px rgba(88, 199, 201, 0.22);
+}
+
+.primary-cta {
+  display: inline-flex;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.48rem;
+  background: linear-gradient(135deg, var(--teal), #2b8991);
+  color: #031115;
+  font-size: 0.88rem;
+  font-weight: 900;
+  padding-inline: 1rem;
+  box-shadow: 0 16px 34px rgba(88, 199, 201, 0.2);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.primary-cta:hover {
+  box-shadow: 0 18px 42px rgba(88, 199, 201, 0.3);
+  transform: translateY(-1px);
+}
+
+.secondary-cta {
+  display: inline-flex;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 0.48rem;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding-inline: 1rem;
+  transition:
+    border-color 200ms ease,
+    background 200ms ease,
+    color 200ms ease;
+}
+
+.secondary-cta:hover {
+  border-color: rgba(88, 199, 201, 0.44);
+  background: rgba(88, 199, 201, 0.08);
+  color: #dffdfa;
+}
+
+.reveal-rise {
+  animation: reveal-rise 720ms ease both;
+}
+
+.reveal-rise:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.reveal-rise:nth-child(3) {
+  animation-delay: 160ms;
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes node-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes path-flow {
+  to {
+    stroke-dashoffset: -84;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

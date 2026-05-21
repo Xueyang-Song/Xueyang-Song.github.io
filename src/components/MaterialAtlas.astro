@@ -1,0 +1,105 @@
+---
+import type { AtlasLink, AtlasNode } from "../data/site";
+
+type Props = {
+  nodes: AtlasNode[];
+  links: AtlasLink[];
+};
+
+const { nodes, links } = Astro.props;
+const nodeById = new Map(nodes.map((node) => [node.id, node]));
+
+const layerLabels = {
+  research: "Research domain",
+  software: "Software tool",
+  publication: "Evidence layer",
+  project: "Dataset/project",
+};
+---
+
+<div class="atlas-map p-4 sm:p-5">
+  <div class="relative z-10 flex items-center justify-between gap-4">
+    <div>
+      <p class="axis-label">Material Atlas / Zn Interface System</p>
+      <p class="mt-1 text-sm text-[var(--muted)]">Nodes connect research questions, evidence, and local-first tools.</p>
+    </div>
+    <div class="hidden gap-2 md:flex">
+      {Object.entries(layerLabels).map(([kind, label]) => (
+        <span class="signal-chip" data-kind={kind}>{label}</span>
+      ))}
+    </div>
+  </div>
+
+  <div class="relative z-10 mt-5">
+    <svg viewBox="0 0 100 82" role="img" aria-label="Network map of battery research domains, publications, datasets, and software tools" class="h-auto w-full overflow-visible">
+      <defs>
+        <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#58c7c9" stop-opacity="0.45" />
+          <stop offset="100%" stop-color="#58c7c9" stop-opacity="0" />
+        </radialGradient>
+        <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="1.8" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <g opacity="0.46">
+        <path d="M8 25 C22 12, 42 10, 55 23 S81 40, 91 26" fill="none" stroke="#94b99f" stroke-width="0.25" />
+        <path d="M10 62 C24 46, 45 42, 58 55 S82 78, 94 60" fill="none" stroke="#d28a55" stroke-width="0.25" />
+        <path d="M16 14 C31 26, 30 48, 19 72" fill="none" stroke="#7aa7d9" stroke-width="0.22" />
+        <path d="M84 12 C71 25, 70 52, 82 76" fill="none" stroke="#58c7c9" stroke-width="0.22" />
+      </g>
+
+      {links.map((link) => {
+        const source = nodeById.get(link.source);
+        const target = nodeById.get(link.target);
+        if (!source || !target) {
+          return null;
+        }
+
+        const midX = (source.x + target.x) / 2;
+        const midY = (source.y + target.y) / 2 - 4;
+        const opacity = link.strength === "primary" ? 0.88 : 0.42;
+        const width = link.strength === "primary" ? 0.7 : 0.42;
+
+        return (
+          <g>
+            <path
+              class="atlas-link-line"
+              d={`M${source.x} ${source.y} Q${midX} ${midY} ${target.x} ${target.y}`}
+              fill="none"
+              stroke-width={width}
+              opacity={opacity}
+            />
+          </g>
+        );
+      })}
+
+      {nodes.map((node, index) => (
+        <g filter="url(#softGlow)" style={`animation-delay: ${index * 120}ms`}>
+          <circle class="atlas-node-pulse" cx={node.x} cy={node.y} r="5.8" />
+          <circle class="atlas-node-core" data-kind={node.kind} cx={node.x} cy={node.y} r="3.4" />
+          <circle cx={node.x} cy={node.y} r="1.15" fill="#edf7f2" />
+          <text x={node.x + 4.8} y={node.y - 2.8} fill="#edf7f2" font-size="2.5" font-weight="800" letter-spacing="0.05em">
+            {node.label}
+          </text>
+          <text x={node.x + 4.8} y={node.y + 1.2} fill="#9caea8" font-size="1.75">
+            {layerLabels[node.kind]}
+          </text>
+        </g>
+      ))}
+    </svg>
+  </div>
+
+  <div class="relative z-10 mt-5 grid gap-3 sm:grid-cols-3">
+    {nodes.slice(0, 3).map((node) => (
+      <div class="rounded-lg border border-[var(--line)] bg-white/[0.035] p-3">
+        <p class="text-xs font-black uppercase tracking-[0.14em] text-[var(--teal)]">{node.label}</p>
+        <p class="mt-2 text-sm leading-5 text-[var(--muted)]">{node.summary}</p>
+      </div>
+    ))}
+  </div>
+</div>

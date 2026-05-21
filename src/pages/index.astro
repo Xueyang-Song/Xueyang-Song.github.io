@@ -1,0 +1,207 @@
+---
+import DownloadButton from "../components/DownloadButton";
+import MaterialAtlas from "../components/MaterialAtlas.astro";
+import ProductVisual from "../components/ProductVisual.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { apps, atlasLinks, atlasNodes, profile, projects, publications } from "../data/site";
+
+const featuredPublications = publications.filter((publication) => publication.featured);
+const focusTags = ["zinc interfaces", "ALD coatings", "electrolytes", "small-data ML", "local-first tools"];
+---
+
+<SiteLayout
+  title="Xueyang Song | Battery Researcher and ML Developer"
+  description="My personal website for battery research, machine learning, and local-first scientific research tools."
+>
+  <section class="atlas-shell observatory-hero border-b border-[var(--line)]">
+    <div class="container-shell relative z-10 grid gap-10 py-16 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:py-24">
+      <div class="reveal-rise">
+        <p class="atlas-kicker">Dark Data Observatory</p>
+        <h1 class="mt-6 max-w-3xl text-5xl font-semibold leading-[0.96] text-[var(--ink)] sm:text-7xl">
+          Xueyang Song
+        </h1>
+        <p class="mt-7 max-w-2xl text-xl leading-8 text-[var(--muted)]">
+          {profile.summary}
+        </p>
+        <div class="mt-7 flex flex-wrap gap-2">
+          {focusTags.map((tag) => (
+            <span class="signal-chip">{tag}</span>
+          ))}
+        </div>
+        <div class="mt-9 flex flex-wrap gap-3">
+          <a href="#apps" class="focus-ring primary-cta">Explore tools</a>
+          <a href={profile.links[0].href} class="focus-ring secondary-cta" target="_blank" rel="noreferrer">
+            Google Scholar
+          </a>
+        </div>
+      </div>
+
+      <div class="reveal-rise">
+        <MaterialAtlas nodes={atlasNodes} links={atlasLinks} />
+      </div>
+    </div>
+  </section>
+
+  <section class="border-b border-[var(--line)] bg-[rgba(8,20,25,0.68)] py-8">
+    <div class="container-shell grid gap-3 sm:grid-cols-3">
+      {profile.metrics.map((metric) => (
+        <div class="data-card p-5">
+          <p class="text-xs font-black uppercase tracking-[0.16em] text-[var(--faint)]">{metric.label}</p>
+          <p class="readout-value mt-2 text-4xl font-semibold">{metric.value}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="research" class="section-pad">
+    <div class="container-shell">
+      <div class="grid gap-5 md:grid-cols-[0.72fr_1.28fr] md:items-end">
+        <div>
+          <p class="atlas-kicker">Atlas regions</p>
+          <h2 class="mt-3 text-4xl font-semibold text-[var(--ink)]">What I work on.</h2>
+        </div>
+        <p class="max-w-2xl text-lg leading-8 text-[var(--muted)] md:justify-self-end">
+          The map connects the same research surface from different angles: materials, evidence, models, and software.
+        </p>
+      </div>
+      <div class="mt-9 grid gap-5 md:grid-cols-3">
+        {profile.researchThemes.map((theme, index) => (
+          <article class="domain-card p-6">
+            <div class="relative z-10">
+              <span class="text-xs font-black uppercase tracking-[0.18em] text-[var(--teal)]">domain 0{index + 1}</span>
+              <h3 class="mt-5 text-2xl font-semibold leading-tight text-[var(--ink)]">{theme.title}</h3>
+              <p class="mt-4 text-sm leading-6 text-[var(--muted)]">{theme.summary}</p>
+              <div class="mt-6 rounded-lg border border-[var(--line)] bg-white/[0.035] p-4">
+                <div class="flex items-center gap-3">
+                  <span class="h-3 w-3 rounded-full bg-[var(--teal)] shadow-[0_0_18px_rgba(88,199,201,0.45)]"></span>
+                  <span class="h-px flex-1 bg-[var(--line-strong)]"></span>
+                  <span class="rounded-full border border-[var(--line)] px-3 py-1 text-xs font-black text-[var(--ink)]">
+                    {theme.tags[0]}
+                  </span>
+                  <span class="h-px flex-1 bg-[var(--line-strong)]"></span>
+                  <span class="h-3 w-3 rounded-full bg-[var(--copper)] shadow-[0_0_18px_rgba(210,138,85,0.42)]"></span>
+                </div>
+              </div>
+              <div class="mt-5 flex flex-wrap gap-2">
+                {theme.tags.map((tag) => (
+                  <span class="signal-chip">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="apps" class="section-pad border-y border-[var(--line)] bg-[rgba(10,23,29,0.74)]">
+    <div class="container-shell">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div class="max-w-3xl">
+          <p class="atlas-kicker">Software layer</p>
+          <h2 class="mt-3 text-4xl font-semibold text-[var(--ink)]">
+            Local-first tools connected to the research map.
+          </h2>
+        </div>
+        <a href="/apps/" class="focus-ring atlas-link rounded-sm text-sm font-black">
+          View all apps
+        </a>
+      </div>
+      <div class="mt-10 grid gap-7 lg:grid-cols-2">
+        {apps.map((app) => (
+          <article class="tool-card p-5">
+            <ProductVisual app={app} />
+            <div class="mt-6">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <h3 class="text-3xl font-semibold text-[var(--ink)]">{app.name}</h3>
+                <span class="status-pill">coming soon</span>
+              </div>
+              <p class="mt-4 text-[var(--muted)]">{app.shortDescription}</p>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <DownloadButton
+                  client:load
+                  repo={app.repo}
+                  status={app.versionStatus}
+                  assetPatterns={app.releaseAssets}
+                  fallbackUrl={app.repo}
+                  label={app.primaryCta}
+                />
+                <a href={`/apps/${app.slug}/`} class="focus-ring secondary-cta">
+                  Product page
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="publications" class="section-pad">
+    <div class="container-shell">
+      <div class="grid gap-5 md:grid-cols-[0.65fr_1.35fr] md:items-end">
+        <div>
+          <p class="atlas-kicker">Evidence layer</p>
+          <h2 class="mt-3 text-4xl font-semibold text-[var(--ink)]">Selected cited papers.</h2>
+        </div>
+        <p class="max-w-2xl text-lg leading-8 text-[var(--muted)] md:justify-self-end">
+          Publications appear as evidence layers in the atlas: citation trails, material systems, and interface questions.
+        </p>
+      </div>
+      <div class="mt-9 grid gap-4">
+        {featuredPublications.map((publication) => (
+          <article class="evidence-row p-5">
+            <div class="grid gap-5 md:grid-cols-[1fr_8rem] md:items-start">
+              <div>
+                <p class="text-sm font-black text-[var(--teal)]">{publication.venue} · {publication.year}</p>
+                <h3 class="mt-2 text-xl font-semibold text-[var(--ink)]">
+                  <a class="atlas-link rounded-sm" href={publication.url} target="_blank" rel="noreferrer">
+                    {publication.title}
+                  </a>
+                </h3>
+                <p class="mt-3 text-sm text-[var(--muted)]">{publication.authors}</p>
+                <div class="mt-5 flex flex-wrap gap-2">
+                  {publication.tags.map((tag) => (
+                    <span class="signal-chip">{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <div class="rounded-lg border border-[var(--line)] bg-white/[0.04] px-4 py-3 text-center">
+                <span class="readout-value block text-3xl font-semibold">{publication.citations}</span>
+                <span class="text-xs font-black uppercase tracking-[0.12em] text-[var(--faint)]">citations</span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="section-pad border-t border-[var(--line)] bg-[rgba(8,20,25,0.7)]">
+    <div class="container-shell">
+      <div class="max-w-3xl">
+        <p class="atlas-kicker">Dataset and project layer</p>
+        <h2 class="mt-3 text-4xl font-semibold text-[var(--ink)]">Research code I keep traceable.</h2>
+      </div>
+      <div class="mt-9 grid gap-5 md:grid-cols-2">
+        {projects.map((project) => (
+          <article class="domain-card p-6">
+            <div class="relative z-10">
+              <h3 class="text-xl font-semibold text-[var(--ink)]">
+                <a class="atlas-link rounded-sm" href={project.href} target="_blank" rel="noreferrer">
+                  {project.name}
+                </a>
+              </h3>
+              <p class="mt-4 text-sm leading-6 text-[var(--muted)]">{project.description}</p>
+              <div class="mt-5 flex flex-wrap gap-2">
+                {project.tags.map((tag) => (
+                  <span class="signal-chip">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</SiteLayout>
