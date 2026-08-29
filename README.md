@@ -22,4 +22,4 @@ npm run build
 - Output directory: `dist`
 - Node.js: `22`
 
-Downloads are intentionally configured as "coming soon" until signed GitHub Release assets are published for the app repositories.
+Paper Pilot resolves the latest Windows x64 installer through GitHub Releases. Unreleased apps keep their download actions disabled.

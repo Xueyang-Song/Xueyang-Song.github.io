@@ -1,40 +1,33 @@
-import { Clock, Download, ExternalLink } from "lucide-react";
+import { Clock, Download, ExternalLink, Laptop, LoaderCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   detectPlatform,
   getInitialDownloadState,
-  selectReleaseAsset,
+  getLatestReleasePageUrl,
+  getReleaseFallbackState,
+  loadLatestRelease,
+  resolveReleaseDownloadState,
+  supportsPlatform,
   type DownloadState,
-  type ReleaseAssetPatterns,
+  type ReleaseAssetRules,
+  type ReleaseStatus,
 } from "../lib/download";
 
 type DownloadButtonProps = {
   repo: string;
-  status: string;
-  assetPatterns: ReleaseAssetPatterns;
-  fallbackUrl: string;
+  status: ReleaseStatus;
+  assetRules: ReleaseAssetRules;
   label: string;
 };
-
-type ReleaseResponse = {
-  assets?: Array<{ name: string; browser_download_url: string }>;
-  html_url?: string;
-};
-
-function repoApiUrl(repo: string) {
-  const url = new URL(repo);
-  const [, owner, name] = url.pathname.split("/");
-  return `https://api.github.com/repos/${owner}/${name}/releases/latest`;
-}
 
 export default function DownloadButton({
   repo,
   status,
-  assetPatterns,
-  fallbackUrl,
+  assetRules,
   label,
 }: DownloadButtonProps) {
-  const initialState = useMemo(() => getInitialDownloadState(status, fallbackUrl), [fallbackUrl, status]);
+  const initialState = useMemo(() => getInitialDownloadState(status), [status]);
+  const releasePageUrl = useMemo(() => getLatestReleasePageUrl(repo), [repo]);
   const [state, setState] = useState<DownloadState>(initialState);
 
   useEffect(() => {
@@ -43,34 +36,32 @@ export default function DownloadButton({
       return;
     }
 
+    const platform = detectPlatform(window.navigator.userAgent);
+
+    if (!supportsPlatform(platform, assetRules)) {
+      setState({
+        kind: "unsupported",
+        label: "Available for Windows only",
+        href: null,
+      });
+      return;
+    }
+
+    setState(initialState);
     let cancelled = false;
 
     async function loadRelease() {
       try {
-        const response = await fetch(repoApiUrl(repo), {
-          headers: { Accept: "application/vnd.github+json" },
-        });
+        const release = await loadLatestRelease(repo);
 
-        if (!response.ok) {
-          throw new Error("Release not available");
-        }
-
-        const release = (await response.json()) as ReleaseResponse;
-        const platform = detectPlatform(window.navigator.userAgent);
-        const href = selectReleaseAsset(release.assets ?? [], platform, assetPatterns);
-
-        if (!cancelled && href) {
-          setState({ kind: "download", label, href });
-        } else if (!cancelled) {
-          setState({
-            kind: "source",
-            label: "View release",
-            href: release.html_url ?? fallbackUrl,
-          });
+        if (!cancelled) {
+          setState(
+            resolveReleaseDownloadState(release, platform, assetRules, label, releasePageUrl),
+          );
         }
       } catch {
         if (!cancelled) {
-          setState(initialState);
+          setState(getReleaseFallbackState(releasePageUrl));
         }
       }
     }
@@ -80,25 +71,49 @@ export default function DownloadButton({
     return () => {
       cancelled = true;
     };
-  }, [assetPatterns, fallbackUrl, initialState, label, repo, status]);
+  }, [assetRules, initialState, label, releasePageUrl, repo, status]);
 
-  const Icon = state.kind === "coming-soon" ? Clock : state.kind === "source" ? ExternalLink : Download;
-  const className =
+  const Icon =
     state.kind === "coming-soon"
+      ? Clock
+      : state.kind === "loading"
+        ? LoaderCircle
+        : state.kind === "unsupported"
+          ? Laptop
+          : state.kind === "source"
+            ? ExternalLink
+            : Download;
+  const isDisabled =
+    state.kind === "coming-soon" || state.kind === "loading" || state.kind === "unsupported";
+  const className =
+    isDisabled
       ? "inline-flex h-11 items-center justify-center gap-2 rounded-md border border-[rgba(210,138,85,0.28)] bg-[rgba(210,138,85,0.1)] px-4 text-sm font-bold text-[#ffd4ac]"
       : "focus-ring inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#58c7c9] px-4 text-sm font-black text-[#031115] shadow-sm shadow-[#58c7c9]/20 transition hover:bg-[#7ee0df]";
 
-  if (state.kind === "coming-soon") {
+  if (isDisabled) {
     return (
-      <button className={className} disabled type="button" aria-label="Download coming soon">
-        <Icon size={17} aria-hidden="true" />
+      <button className={className} disabled type="button" aria-label={state.label} aria-live="polite">
+        <Icon
+          className={state.kind === "loading" ? "animate-spin" : undefined}
+          size={17}
+          aria-hidden="true"
+        />
         <span>{state.label}</span>
       </button>
     );
   }
 
+  if (state.kind === "source") {
+    return (
+      <a className={className} href={state.href} target="_blank" rel="noreferrer">
+        <Icon size={17} aria-hidden="true" />
+        <span>{state.label}</span>
+      </a>
+    );
+  }
+
   return (
-    <a className={className} href={state.href} target="_blank" rel="noreferrer">
+    <a className={className} href={state.href}>
       <Icon size={17} aria-hidden="true" />
       <span>{state.label}</span>
     </a>

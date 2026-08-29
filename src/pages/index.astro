@@ -114,7 +114,9 @@ const focusTags = ["zinc interfaces", "ALD coatings", "electrolytes", "small-dat
             <div class="mt-6">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <h3 class="text-3xl font-semibold text-[var(--ink)]">{app.name}</h3>
-                <span class="status-pill">coming soon</span>
+                <span class="status-pill" data-status={app.versionStatus}>
+                  {app.versionStatus === "available" ? "available" : "coming soon"}
+                </span>
               </div>
               <p class="mt-4 text-[var(--muted)]">{app.shortDescription}</p>
               <div class="mt-6 flex flex-wrap gap-3">
@@ -122,8 +124,7 @@ const focusTags = ["zinc interfaces", "ALD coatings", "electrolytes", "small-dat
                   client:load
                   repo={app.repo}
                   status={app.versionStatus}
-                  assetPatterns={app.releaseAssets}
-                  fallbackUrl={app.repo}
+                  assetRules={app.releaseAssets}
                   label={app.primaryCta}
                 />
                 <a href={`/apps/${app.slug}/`} class="focus-ring secondary-cta">

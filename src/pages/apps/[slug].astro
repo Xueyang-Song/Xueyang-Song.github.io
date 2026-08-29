@@ -13,6 +13,8 @@ const app = getApp(Astro.params.slug ?? "");
 if (!app) {
   return Astro.redirect("/apps/");
 }
+
+const releaseIsAvailable = app.versionStatus === "available";
 ---
 
 <SiteLayout title={`${app.name} | Xueyang Song`} description={app.shortDescription}>
@@ -24,7 +26,9 @@ if (!app) {
         </a>
         <div class="mt-6 flex flex-wrap items-center gap-3">
           <h1 class="text-5xl font-semibold leading-tight text-[var(--ink)] sm:text-6xl">{app.name}</h1>
-          <span class="status-pill">coming soon</span>
+          <span class="status-pill" data-status={app.versionStatus}>
+            {releaseIsAvailable ? "available" : "coming soon"}
+          </span>
         </div>
         <p class="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)] sm:text-xl">{app.shortDescription}</p>
         <div class="mt-8 flex flex-wrap gap-3">
@@ -32,8 +36,7 @@ if (!app) {
             client:load
             repo={app.repo}
             status={app.versionStatus}
-            assetPatterns={app.releaseAssets}
-            fallbackUrl={app.repo}
+            assetRules={app.releaseAssets}
             label={app.primaryCta}
           />
           <a href={app.repo} class="focus-ring secondary-cta" target="_blank" rel="noreferrer">
@@ -56,7 +59,14 @@ if (!app) {
           <dl class="mt-7 space-y-6">
             <div>
               <dt class="text-xs font-black uppercase tracking-[0.14em] text-[var(--faint)]">Release</dt>
-              <dd class="mt-1 text-sm font-bold text-[#ffd4ac]">Signed downloads coming soon</dd>
+              <dd
+                class:list={[
+                  "mt-1 text-sm font-bold",
+                  releaseIsAvailable ? "text-[#9debdc]" : "text-[#ffd4ac]",
+                ]}
+              >
+                {releaseIsAvailable ? "Available on GitHub Releases" : "Signed downloads coming soon"}
+              </dd>
             </div>
             <div>
               <dt class="text-xs font-black uppercase tracking-[0.14em] text-[var(--faint)]">Platforms</dt>
@@ -80,7 +90,7 @@ if (!app) {
 
       <div class="grid gap-7">
         <article class="data-card p-6">
-          <p class="atlas-kicker">Why I'm building it</p>
+          <p class="atlas-kicker">{releaseIsAvailable ? "Who it's for" : "Why I'm building it"}</p>
           <h2 class="mt-4 text-3xl font-semibold leading-tight text-[var(--ink)]">{app.audience}</h2>
           <p class="mt-5 text-lg leading-8 text-[var(--muted)]">{app.positioning}</p>
         </article>
@@ -114,9 +124,15 @@ if (!app) {
           <div class="relative z-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div>
               <p class="atlas-kicker">Download</p>
-              <h2 class="mt-4 text-2xl font-semibold text-[var(--ink)]">I'll publish signed downloads through GitHub Releases.</h2>
+              <h2 class="mt-4 text-2xl font-semibold text-[var(--ink)]">
+                {releaseIsAvailable
+                  ? `Download ${app.name} for Windows`
+                  : "I'll publish signed downloads through GitHub Releases."}
+              </h2>
               <p class="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-                I've already configured this page for OS-aware release assets. Until signed binaries are published, the primary action stays disabled and the source remains available.
+                {releaseIsAvailable
+                  ? "The download button resolves the latest Windows x64 installer directly from GitHub Releases. Visitors on other platforms will see that Paper Pilot is available for Windows only."
+                  : "I've already configured this page for OS-aware release assets. Until signed binaries are published, the primary action stays disabled and the source remains available."}
               </p>
             </div>
             <div class="flex flex-wrap gap-3">
@@ -124,8 +140,7 @@ if (!app) {
                 client:load
                 repo={app.repo}
                 status={app.versionStatus}
-                assetPatterns={app.releaseAssets}
-                fallbackUrl={app.repo}
+                assetRules={app.releaseAssets}
                 label={app.primaryCta}
               />
               <a href={app.repo} class="focus-ring secondary-cta" target="_blank" rel="noreferrer">

@@ -312,6 +312,12 @@ select {
   text-transform: uppercase;
 }
 
+.status-pill[data-status="available"] {
+  border-color: rgba(88, 199, 201, 0.4);
+  background: rgba(88, 199, 201, 0.12);
+  color: #b8f4ed;
+}
+
 .readout-value {
   color: #ffffff;
   font-variant-numeric: tabular-nums;
