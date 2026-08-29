@@ -1,4 +1,4 @@
-import type { ReleaseAssetPatterns } from "../lib/download";
+import type { ReleaseAssetRules, ReleaseStatus } from "../lib/download";
 
 export type ProfileLink = {
   label: string;
@@ -35,14 +35,14 @@ export type AppConfig = {
   slug: string;
   name: string;
   repo: string;
-  versionStatus: "coming-soon" | "available";
+  versionStatus: ReleaseStatus;
   shortDescription: string;
   audience: string;
   positioning: string;
   features: string[];
   workflow: string[];
   platforms: string[];
-  releaseAssets: ReleaseAssetPatterns;
+  releaseAssets: ReleaseAssetRules;
   primaryCta: string;
   secondaryCta: string;
   accent: "sage" | "sea" | "amber";
@@ -197,13 +197,13 @@ export const apps: AppConfig[] = [
     slug: "paper-pilot",
     name: "Paper Pilot",
     repo: "https://github.com/Xueyang-Song/paper-pilot",
-    versionStatus: "coming-soon",
+    versionStatus: "available",
     shortDescription:
-      "I'm building Paper Pilot as a local-first Electron research assistant for crawling papers, organizing artifacts, and generating AI-backed scientific briefs.",
+      "Paper Pilot is a local-first Windows research assistant for crawling papers, organizing artifacts, and generating AI-backed scientific briefs.",
     audience:
-      "I'm building this for scientists who need a transparent desktop workflow for literature discovery, full-text collection, and project-scoped synthesis.",
+      "Paper Pilot is for scientists who need a transparent desktop workflow for literature discovery, full-text collection, and project-scoped synthesis.",
     positioning:
-      "With Paper Pilot, I'm bringing academic source crawlers, local SQLite storage, open-access PDF handling, search, and AI synthesis into one desktop workspace.",
+      "Paper Pilot brings academic source crawlers, local SQLite storage, open-access PDF handling, search, and AI synthesis into one desktop workspace.",
     features: [
       "Project workspaces for chat, crawl jobs, papers, artifacts, and reports.",
       "API-first source registry for OpenAlex, Crossref, Semantic Scholar, PubMed, arXiv, Europe PMC, CORE, and Unpaywall.",
@@ -216,13 +216,11 @@ export const apps: AppConfig[] = [
       "Approve source, script, or browser jobs when policy requires it.",
       "Review papers, PDFs, logs, and generated briefs in the artifact panel.",
     ],
-    platforms: ["Windows build path ready", "macOS planned", "Linux planned"],
+    platforms: ["Windows (x64)"],
     releaseAssets: {
-      windows: [".exe", "Setup"],
-      mac: [".dmg"],
-      linux: [".AppImage", ".deb"],
+      windows: [{ prefix: "Paper-Pilot-Setup-", suffix: ".exe" }],
     },
-    primaryCta: "Download Paper Pilot",
+    primaryCta: "Download Paper Pilot for Windows",
     secondaryCta: "View source",
     accent: "sea",
   },
@@ -251,9 +249,9 @@ export const apps: AppConfig[] = [
     ],
     platforms: ["Windows packaging planned", "macOS planned", "Linux planned"],
     releaseAssets: {
-      windows: [".exe", "Setup"],
-      mac: [".dmg"],
-      linux: [".AppImage", ".deb"],
+      windows: [{ suffix: ".exe" }],
+      mac: [{ suffix: ".dmg" }],
+      linux: [{ suffix: ".AppImage" }, { suffix: ".deb" }],
     },
     primaryCta: "Download AcademiaML",
     secondaryCta: "View source",
